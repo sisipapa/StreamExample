@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -83,5 +84,48 @@ public class StreamExample1 {
         BufferedReader br = new BufferedReader(new FileReader("C:\\IdeaProjects\\StreamExample\\src\\file\\file2.txt"));
         Stream<String> lines = br.lines();
         lines.forEach(System.out::println);
+    }
+
+    @Test
+    void test8() {
+        Stream<String> stream = Pattern.compile(",").splitAsStream("aaa,bbb,ccc,ddd,eee");
+        stream.forEach(System.out::println);
+    }
+
+    @Test
+    void test9() {
+        Stream<String> stream = Stream.<String>builder()
+                .add("aaa")
+                .add("bbb")
+                .add("ccc")
+                .add("ddd")
+                .add("eee").build();
+        stream.forEach(System.out::println);
+    }
+
+    @Test
+    void test10(){
+        Stream<Integer> stream = Stream.iterate(1, x -> x + 2).limit(3);
+        stream.forEach(System.out::println);
+    }
+
+    @Test
+    void test11(){
+        Stream<Double> randomStream = Stream.generate(Math::random).limit(3);
+        randomStream.forEach(System.out::println);
+    }
+
+    @Test
+    void test12(){
+        List<String> list1 = List.of("111", "222");
+        List<String> list2 = List.of("333", "444");
+        Stream<String> stream = Stream.concat(list1.stream(), list2.stream());
+        stream.forEach(System.out::println);
+    }
+
+    @Test
+    void test13(){
+        Stream<Object> empty = Stream.empty();
+        System.out.println(empty.count());
     }
 }
