@@ -131,18 +131,23 @@ public class StreamExample2 {
 
     @Test
     void test7(){
+        // limit 메서드를 사용하면 스트림 내의 요소 개수를 제한할 수 있습니다.
+        List<String> list = List.of("a", "b", "c", "d", "e").stream()
+                .limit(3)
+                .collect(Collectors.toList());
+
+        System.out.println(list);
     }
 
     @Test
     void test8() {
-    }
+        // skip 메서드를 사용하면 스트림 내의 첫 번째 요소부터 인자로 전달된
+        // 개수 만큼의 요소를 제외한 나머지 요소로 구성된 새로운 스트림을 리턴합니다.
+        List<String> list = Arrays.stream(new String[]{"a", "b", "c", "d", "e"})
+                .skip(3)
+                .collect(Collectors.toList());
 
-    @Test
-    void test9() {
-    }
-
-    @Test
-    void test10(){
+        System.out.println(list);
     }
 
     @Data
