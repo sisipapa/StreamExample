@@ -1,8 +1,10 @@
+import lombok.Generated;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalDouble;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
@@ -91,7 +93,51 @@ public class StreamExample3 {
 
     @Test
     void test5(){
+        List<Food> list = new ArrayList<>();
+        list.add(new Food("burger", 520));
+        list.add(new Food("chips", 230));
+        list.add(new Food("coke", 143));
+        list.add(new Food("soda", 143));
 
+        // map으로 Food Object에서 name만을 추출 List<String> 객체로 반환
+        List<String> nameList = list.stream()
+                .map(Food::getName)
+                .collect(Collectors.toList());
+        nameList.forEach(System.out::println);
+        System.out.println("=================================================");
+
+        // name 길이의 합 구하기
+        Integer summingName = list.stream()
+                .collect(Collectors.summingInt(s -> s.getName().length()));
+        System.out.println(summingName);
+        System.out.println("=================================================");
+
+        // mapToInt 메서드로 칼로리(cal) 합 구하기
+        int sum = list.stream().mapToInt(Food::getCal).sum();
+        System.out.println(sum);
+        System.out.println("=================================================");
+
+        // Collectors.averagingInt 평균 구하기
+        Double averageInt = list.stream()
+                .collect(Collectors.averagingInt(Food::getCal));
+        System.out.println(averageInt);
+        System.out.println("=================================================");
+
+        // Collectors.averagingDouble 평균 구하기
+        Double averageDouble = list.stream()
+                .collect(Collectors.averagingDouble(Food::getCal));
+        System.out.println(averageDouble);
+        System.out.println("=================================================");
+
+        // Collectors.summarizingInt 통계함수
+        IntSummaryStatistics summaryStatistics = list.stream()
+                .collect(Collectors.summarizingInt(Food::getCal));
+
+        System.out.println("평균 : " + summaryStatistics.getAverage());
+        System.out.println("개수 : " + summaryStatistics.getCount());
+        System.out.println("최댓값 : " + summaryStatistics.getMax());
+        System.out.println("최솟값 : " + summaryStatistics.getMin());
+        System.out.println("합계 : " + summaryStatistics.getSum());
     }
 
     @Test
@@ -104,6 +150,25 @@ public class StreamExample3 {
 
     @Test
     void test8() {
+    }
+
+    @Getter
+    @NoArgsConstructor
+    static class Food {
+        public Food(String name, int cal) {
+            this.name = name;
+            this.cal = cal;
+        }
+
+        private String name;
+        private int cal;
+
+        @Override
+        public String toString() {
+            return String.format("name: %s, cal: %s", name, cal);
+        }
+
+        // getter, setter 생략
     }
 }
 
