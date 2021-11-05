@@ -1,12 +1,15 @@
 import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StreamExample3 {
     
@@ -94,10 +97,10 @@ public class StreamExample3 {
     @Test
     void test5(){
         List<Food> list = new ArrayList<>();
-        list.add(new Food("burger", 520));
-        list.add(new Food("chips", 230));
-        list.add(new Food("coke", 143));
-        list.add(new Food("soda", 143));
+        list.add(new Food("aaa", 300));
+        list.add(new Food("bbb", 400));
+        list.add(new Food("ccc", 100));
+        list.add(new Food("ddd", 100));
 
         // map으로 Food Object에서 name만을 추출 List<String> 객체로 반환
         List<String> nameList = list.stream()
@@ -142,14 +145,108 @@ public class StreamExample3 {
 
     @Test
     void test6(){
+        List<Food> list = new ArrayList<>();
+        list.add(new Food("aaa", 300));
+        list.add(new Food("bbb", 400));
+        list.add(new Food("ccc", 100));
+        list.add(new Food("ddd", 100));
+
+        // without arguments
+        String defaultJoining = list.stream()
+                .map(Food::getName).collect(Collectors.joining());
+
+        System.out.println(defaultJoining);
+
+        // delimiter
+        String delimiterJoining = list.stream()
+                .map(Food::getName).collect(Collectors.joining(","));
+
+        System.out.println(delimiterJoining);
+
+        // delimiter, prefix, suffix
+        String combineJoining = list.stream()
+                .map(Food::getName).collect(Collectors.joining(",", "[", "]"));
+
+        System.out.println(combineJoining);
     }
 
     @Test
     void test7(){
+        List<Food> list = new ArrayList<>();
+        list.add(new Food("aaa", 300));
+        list.add(new Food("bbb", 400));
+        list.add(new Food("ccc", 100));
+        list.add(new Food("ddd", 100));
+
+        // 칼로리(cal)로 그룹 만들기
+        Map<Integer, List<Food>> calMap = list.stream()
+                .collect(Collectors.groupingBy(Food::getCal));
+
+        System.out.println(calMap);
+
+        System.out.println("=================================================");
+
+        // partitioningBy는 인자로 Predicate 함수형 인터페이스를 받습니다. Predicate는 인자를 받아서 참 또는 거짓을 반환하기 때문에 boolean 값으로 그룹핑합니다.
+        Map<Boolean, List<Food>> partitionMap = list.stream()
+                .collect(Collectors.partitioningBy(food -> food.getCal() > 100));
+
+        System.out.println(partitionMap);
     }
 
     @Test
     void test8() {
+        // 키에 값이 2개 이상 존재하게 되는 경우 컬렉터는 IllegalStateException을 던집니다. 따라서 키가 중복되는 예외 상황을 해결하기 위해 BinaryOperator 인자를 추가할 수 있습니다.
+        List<Food> list = new ArrayList<>();
+        list.add(new Food("aaa", 300));
+        list.add(new Food("bbb", 400));
+        list.add(new Food("ccc", 100));
+        list.add(new Food("ddd", 100));
+
+        // 동일한 키가 있는 경우 새 값으로 대체한다.
+        Map<Integer, String> map = list.stream()
+                .collect(Collectors.toMap(
+                        o -> o.getCal(),
+                        o -> o.getName(),
+                        (oldValue, newValue) -> newValue));
+
+        System.out.println(map);
+    }
+
+    @Test
+    void test9() {
+        List<Food> list = new ArrayList<>();
+        list.add(new Food("aaa", 300));
+        list.add(new Food("bbb", 400));
+        list.add(new Food("ccc", 100));
+        list.add(new Food("ddd", 100));
+
+        Food food = list.stream()
+                .collect(Collectors.collectingAndThen(
+                        Collectors.maxBy(Comparator.comparing(Food::getCal)),
+                        (Optional<Food> o) -> o.orElse(null)));
+
+        System.out.println(food);
+    }
+
+    @Test
+    void test10() {
+        List<Food> list = new ArrayList<>();
+        list.add(new Food("aaa", 300));
+        list.add(new Food("bbb", 400));
+        list.add(new Food("ccc", 100));
+        list.add(new Food("ddd", 100));
+
+        boolean anyMatch = list.stream()
+                .anyMatch(food -> food.getCal() > 300);
+        assertTrue(anyMatch);
+
+        boolean allMatch = list.stream()
+                .allMatch(food -> food.getCal() > 100);
+        assertFalse(allMatch);
+
+        boolean noneMatch = list.stream()
+                .noneMatch(food -> food.getCal() < 1000);
+        assertFalse(noneMatch);
     }
 
     @Getter
